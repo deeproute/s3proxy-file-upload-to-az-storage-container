@@ -1,0 +1,28 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  namespace: s3test
+  name: s3-upload
+spec:
+  template:
+    spec:
+      containers:
+      - image: <ACR-NAME-HERE>.azurecr.io/tests/s3-upload:1.0.0
+        name: s3-upload
+        imagePullPolicy: Always
+        envFrom:
+        - configMapRef:
+            name: s3test-config
+        - secretRef:
+            name: s3test-credentials
+        command:
+        - python
+        - /scripts/s3_upload.py
+        resources:
+          requests:
+            cpu: 50m
+            memory: 64Mi
+          limits:
+            cpu: 100m
+            memory: 256Mi
+      restartPolicy: Never
